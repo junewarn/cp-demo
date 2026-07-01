@@ -158,10 +158,10 @@ const UnboundView: React.FC = () => {
         </motion.div>
       </Box>
 
-      {/* === 全服CP结成消息滚动 === */}
+      {/* === 全服CP戒指赠送记录滚动 === */}
       <Box sx={{ mt: 3, position: 'relative', zIndex: 1 }}>
         <Typography sx={{ fontSize: 15, fontWeight: 600, color: 'rgba(255,255,255,0.9)', px: 2, mb: 1 }}>
-          💕 全服CP结成消息
+          💕 全服cp戒指赠送记录
         </Typography>
         <CPPairingScrollList />
       </Box>
