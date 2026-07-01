@@ -34,22 +34,25 @@ function getNativeInput(): HTMLInputElement {
 // ============================================================
 // Helper: render the modal with default props
 // ============================================================
-function renderModal(overrides: Partial<{
-  open: boolean;
-  onClose: ReturnType<typeof vi.fn>;
-  onConfirm: ReturnType<typeof vi.fn>;
-  title: string;
-  description: string;
-  warningText: string;
-}> = {}) {
+interface RenderModalOverrides {
+  open?: boolean;
+  onClose?: () => void;
+  onConfirm?: () => void;
+  title?: string;
+  description?: string;
+  warningText?: string;
+}
+
+function renderModal(overrides: RenderModalOverrides = {}) {
+  const onClose = overrides.onClose ?? vi.fn();
+  const onConfirm = overrides.onConfirm ?? vi.fn();
   const props = {
-    open: true,
-    onClose: vi.fn(),
-    onConfirm: vi.fn(),
-    title: '💔 解除关系',
-    description: '确定要解除关系吗？',
-    warningText: '⚠️ 此操作不可恢复',
-    ...overrides,
+    open: overrides.open ?? true,
+    onClose,
+    onConfirm,
+    title: overrides.title ?? '💔 解除关系',
+    description: overrides.description ?? '确定要解除关系吗？',
+    warningText: overrides.warningText ?? '⚠️ 此操作不可恢复',
   };
   const result = render(<ConfirmUnbindModal {...props} />);
   return { ...result, ...props };
