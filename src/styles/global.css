@@ -1,0 +1,320 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* === CP 主色系 === */
+  --cp-primary: #E91E8C;
+  --cp-primary-light: #F8BBD0;
+  --cp-primary-dark: #AD1457;
+  --cp-accent: #FF6B9D;
+  --cp-gold: #FFD700;
+  --cp-platinum: #C0C0C0;
+  --cp-rainbow: linear-gradient(90deg, #FF6B6B, #FFD93D, #6BCB77, #4D96FF, #9B59B6);
+
+  /* === Special 关系色系 === */
+  --sp-bestie: #4D96FF;
+  --sp-bestie-bg: #E3F2FD;
+  --sp-bestie-border: #90CAF9;
+  --sp-soulmate: #9B59B6;
+  --sp-soulmate-bg: #F3E5F5;
+  --sp-soulmate-border: #CE93D8;
+  --sp-homie: #FF8C00;
+  --sp-homie-bg: #FFF3E0;
+  --sp-homie-border: #FFCC80;
+
+  /* === CP 空间主题背景 === */
+  --cp-space-stars: linear-gradient(180deg, #1a0a2e 0%, #2d1b4e 30%, #4a1942 60%, #6b1d52 100%);
+  --cp-space-curtain: linear-gradient(180deg, rgba(255,182,193,0.15), rgba(255,105,180,0.08));
+
+  /* === 等级专属背景 === */
+  --cp-lv1-8: linear-gradient(135deg, #FFB6C1, #FFC0CB);
+  --cp-lv9-bg: linear-gradient(135deg, #1a1a3e, #2c3e6b, #4a90d9);
+  --cp-lv10-bg: linear-gradient(135deg, #1a1a2e, #4a3800, #c9a96e);
+  --cp-lv11-bg: linear-gradient(135deg, #FF6B6B, #FFD93D, #6BCB77, #4D96FF, #9B59B6);
+  --cp-lv12-bg: linear-gradient(135deg, #1a0033, #4a0e6b, #9b59b6);
+  --cp-lv13-bg: linear-gradient(135deg, #FF0080, #FF8C00, #40E0D0, #8B00FF);
+
+  /* === 按钮 === */
+  --btn-crystal: rgba(255, 255, 255, 0.15);
+  --btn-crystal-border: rgba(255, 255, 255, 0.25);
+  --btn-gold-border: #FFD700;
+
+  /* === 证书颜色主题 === */
+  --cert-lv3: #B3E5FC;
+  --cert-lv4: #F8BBD0;
+  --cert-lv5: #FFE082;
+  --cert-lv6: #CE93D8;
+  --cert-lv7: #EF9A9A;
+
+  /* === 勋章颜色 === */
+  --badge-gold-star: #FFD700;
+  --badge-heart-pink: #FF6B9D;
+
+  /* === 希腊柱廊颜色 === */
+  --column-gold: #C9A96E;
+  --column-gold-top: #FFD700;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1a0a2e;
+  overscroll-behavior: none;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@layer components {
+  .cp-gradient-text {
+    background: var(--cp-rainbow);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .cp-card {
+    @apply bg-white rounded-2xl shadow-sm border border-pink-50;
+  }
+
+  .cp-btn-primary {
+    @apply text-white font-semibold rounded-full px-6 py-2.5;
+    background: linear-gradient(135deg, var(--cp-primary), var(--cp-accent));
+  }
+
+  .cp-btn-primary:active {
+    transform: scale(0.96);
+    opacity: 0.9;
+  }
+
+  .sweep-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sweep-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 100%
+    );
+    transform: skewX(-15deg);
+    animation: sweep 3s ease-in-out infinite;
+  }
+
+  /* CP星空背景 */
+  .cp-starry-bg {
+    background: var(--cp-space-stars);
+    position: relative;
+  }
+
+  /* 粉色帷幕遮罩 */
+  .cp-curtain-overlay {
+    background: var(--cp-space-curtain);
+    pointer-events: none;
+  }
+
+  /* 希腊柱廊装饰 */
+  .greek-column-left::before,
+  .greek-column-right::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 24px;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      var(--column-gold-top) 0%,
+      var(--column-gold) 10%,
+      var(--column-gold) 90%,
+      var(--column-gold-top) 100%
+    );
+    opacity: 0.18;
+    z-index: 0;
+  }
+
+  .greek-column-left::before {
+    left: 8px;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 2px 0 8px rgba(201, 169, 110, 0.15);
+  }
+
+  .greek-column-right::after {
+    right: 8px;
+    border-radius: 12px 12px 0 0;
+    box-shadow: -2px 0 8px rgba(201, 169, 110, 0.15);
+  }
+
+  /* 金色边框按钮 */
+  .btn-gold-border {
+    border: 2px solid var(--btn-gold-border);
+    color: var(--btn-gold-border);
+    background: rgba(255, 215, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .btn-gold-border:hover {
+    background: rgba(255, 215, 0, 0.18);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+
+  /* 水晶按钮 */
+  .btn-crystal {
+    background: var(--btn-crystal);
+    border: 1px solid var(--btn-crystal-border);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    transition: all 0.3s ease;
+  }
+
+  .btn-crystal:hover {
+    background: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-crystal:active {
+    transform: scale(0.96);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f8bbd0;
+  border-radius: 4px;
+}
+
+/* Safe area for notched devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ============================================================
+   全局关键帧动画
+   ============================================================ */
+
+@keyframes sweep {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes slide-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes bounce-in {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes heart-beat {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.15); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.1); }
+  60% { transform: scale(1); }
+}
+
+@keyframes scroll-up {
+  0% { opacity: 0; transform: translateY(100%); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-left {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes rainbow-shift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes heart-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+@keyframes wing-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(2deg); }
+}
+
+@keyframes sparkle-char {
+  0% { opacity: 0; transform: scale(0.5) translateY(10px); }
+  60% { opacity: 1; transform: scale(1.1) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+
+@keyframes gift-scroll-vertical {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+@keyframes curtain-wave {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+@keyframes golden-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 215, 0, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+}
+
+@keyframes number-badge-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

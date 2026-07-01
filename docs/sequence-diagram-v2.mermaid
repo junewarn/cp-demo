@@ -1,0 +1,56 @@
+sequenceDiagram
+    actor User
+    participant BoundView as BoundView
+    participant CoupleAvatar as CoupleAvatarGroup
+    participant LevelBadge as LevelBadge
+    participant HeartPulse as HeartPulseLine
+
+    User->>BoundView: 进入已绑定CP空间
+    BoundView->>BoundView: 读取 cpRelationship
+
+    alt is7DayTaskComplete === true
+        BoundView->>CoupleAvatar: 渲染双方头像
+        CoupleAvatar->>LevelBadge: 渲染勋章
+
+        alt cpLevel >= 9
+            LevelBadge->>LevelBadge: 显示带数字勋章 (如 "9")
+        else cpLevel <= 8
+            LevelBadge->>LevelBadge: 显示基础爱心勋章 (无数字)
+        end
+
+        LevelBadge-->>User: 展示数字勋章
+    else is7DayTaskComplete === false
+        BoundView->>HeartPulse: 渲染爱心线脉冲动画
+        HeartPulse->>HeartPulse: Framer Motion scale(1→1.2→1)<br/>duration: 1.5s, infinite
+        HeartPulse-->>User: 展示爱心线脉冲 (无论等级)
+    end
+
+---
+sequenceDiagram
+    actor User
+    participant SpecialPage as SpecialPage
+    participant SlotGrid as SpecialSlotGrid
+    participant UnlockModal as SpecialUnlockModal
+    participant Context as AppContext
+
+    User->>SpecialPage: 进入 Special 页面
+    SpecialPage->>Context: 读取 specialSlotConfigs
+
+    loop 每个 SpecialType
+        SpecialPage->>SlotGrid: 渲染关系位网格
+        SlotGrid->>SlotGrid: 计算 usedSlots vs maxSlots
+
+        alt usedSlots < 3
+            SlotGrid->>SlotGrid: 显示剩余位置数 + 解锁按钮
+        else usedSlots === 3 (ALL types)
+            SlotGrid->>SlotGrid: 隐藏解锁入口
+        end
+    end
+
+    User->>SlotGrid: 点击解锁按钮
+    SlotGrid->>UnlockModal: 打开确认弹窗
+    UnlockModal->>UnlockModal: 显示: "花费 36,000 金币解锁?"
+    User->>UnlockModal: 确认解锁
+    UnlockModal->>Context: dispatch(UNLOCK_SLOT, { type })
+    Context->>Context: 扣除 36,000 金币<br/>对应类型 maxSlots: 2 → 3
+    Context->>SlotGrid: 重新渲染

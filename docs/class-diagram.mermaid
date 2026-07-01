@@ -1,0 +1,205 @@
+classDiagram
+    direction TB
+
+    %% ── 枚举 ──
+    class Gender {
+        <<enumeration>>
+        MALE
+        FEMALE
+        OTHER
+    }
+
+    class SpecialType {
+        <<enumeration>>
+        BESTIE
+        SOULMATE
+        HOMIE
+    }
+
+    class CPState {
+        <<enumeration>>
+        UNBOUND
+        BOUND
+    }
+
+    class ViewMode {
+        <<enumeration>>
+        SELF
+        OTHER
+    }
+
+    %% ── 核心数据模型 ──
+    class User {
+        +string id
+        +string name
+        +string avatar
+        +Gender gender
+        +number level
+        +string signature
+    }
+
+    class CPRelationship {
+        +string id
+        +User partner
+        +number cpLevel
+        +number taskDays
+        +boolean is7DayTaskComplete
+        +Date boundDate
+        +CPBadge[] badges
+        +CPMemory[] memories
+        +CPUpgradeRecord[] upgradeRecords
+        +GiftRecord[] giftRecords
+    }
+
+    class CPBadge {
+        +string id
+        +BadgeType type
+        +number level
+        +string name
+        +string iconUrl
+        +boolean unlocked
+    }
+
+    class BadgeType {
+        <<enumeration>>
+        LEVEL_BADGE
+        ACHIEVEMENT_BADGE
+        CHECKIN_BADGE
+    }
+
+    class CPMemory {
+        +string id
+        +GiftRecord gift
+        +Date date
+        +string description
+    }
+
+    class CPUpgradeRecord {
+        +string id
+        +number fromLevel
+        +number toLevel
+        +Date date
+    }
+
+    class GiftRecord {
+        +string id
+        +string giftName
+        +string giftIcon
+        +number value
+        +User sender
+        +User receiver
+        +Date date
+    }
+
+    class CPTask {
+        +string id
+        +number day
+        +string rewardName
+        +string rewardIcon
+        +string rewardType
+        +boolean completed
+    }
+
+    class CheckInRecord {
+        +string id
+        +Date date
+        +boolean checked
+    }
+
+    class CPPrivilege {
+        +number level
+        +string title
+        +PrivilegeItem[] items
+        +string backgroundClass
+    }
+
+    class PrivilegeItem {
+        +string icon
+        +string name
+        +string description
+        +boolean unlocked
+    }
+
+    class CPRankingEntry {
+        +number rank
+        +User user
+        +number completedDays
+        +Date lastCompletedAt
+    }
+
+    class SpecialRelationship {
+        +string id
+        +User partner
+        +SpecialType type
+        +Date establishedDate
+    }
+
+    %% ── 应用状态 ──
+    class AppState {
+        +User currentUser
+        +CPState cpState
+        +CPRelationship cpRelationship
+        +SpecialRelationship[] specialRelationships
+        +CPTask[] cpTasks
+        +CheckInRecord[] checkInRecords
+        +CPPrivilege[] cpPrivileges
+        +CPRankingEntry[] rankingEntries
+        +ViewMode viewMode
+        +User viewingUser
+    }
+
+    class AppAction {
+        <<union>>
+        +type: SET_CP_STATE
+        +type: SET_VIEW_MODE
+        +type: SET_VIEWING_USER
+        +type: COMPLETE_TASK
+        +type: ADD_CHECKIN
+        +type: TOGGLE_CP_BIND
+    }
+
+    %% ── 组件Props ──
+    class CPSpacePageProps {
+        +ViewMode viewMode
+    }
+
+    class BottomNavProps {
+        +string activeTab
+        +function onTabChange
+    }
+
+    class LevelBadgeProps {
+        +number level
+        +BadgeType type
+        +boolean showNumber
+    }
+
+    class GiftScrollListProps {
+        +GiftRecord[] gifts
+        +number scrollInterval
+    }
+
+    class CheckInCalendarProps {
+        +CheckInRecord[] records
+        +Date currentMonth
+        +function onMonthChange
+    }
+
+    %% ── 关系 ──
+    User "1" --> "0..1" CPRelationship : has
+    User "1" --> "*" SpecialRelationship : has
+    CPRelationship "1" --> "*" CPBadge : contains
+    CPRelationship "1" --> "*" CPMemory : contains
+    CPRelationship "1" --> "*" CPUpgradeRecord : contains
+    CPRelationship "1" --> "*" GiftRecord : contains
+    CPMemory "1" --> "1" GiftRecord : references
+    CPBadge --> BadgeType
+    CPPrivilege "1" --> "*" PrivilegeItem : contains
+    CPRankingEntry "1" --> "1" User : references
+    SpecialRelationship --> SpecialType
+    AppState "1" --> "1" User : currentUser
+    AppState "1" --> "0..1" CPRelationship : cpRelationship
+    AppState "1" --> "*" SpecialRelationship : specialRelationships
+    AppState "1" --> "*" CPTask : cpTasks
+    AppState "1" --> "*" CPPrivilege : cpPrivileges
+    AppState "1" --> "*" CPRankingEntry : rankingEntries
