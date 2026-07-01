@@ -29,7 +29,6 @@ const PairingMessageCard: React.FC<{ message: CPPairingMessage }> = ({ message }
           border: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        <Box sx={{ fontSize: 28, flexShrink: 0 }}>💍</Box>
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>
             {message.user1Name} 赠送 {message.user2Name}
@@ -41,22 +40,7 @@ const PairingMessageCard: React.FC<{ message: CPPairingMessage }> = ({ message }
             {message.date}
           </Typography>
         </Box>
-        {message.cpLevel !== undefined && (
-          <Typography
-            sx={{
-              fontSize: 11,
-              fontWeight: 700,
-              color: '#FFD700',
-              whiteSpace: 'nowrap',
-              bgcolor: 'rgba(255,215,0,0.12)',
-              borderRadius: 1.5,
-              px: 1.5,
-              py: 0.25,
-            }}
-          >
-            Lv.{message.cpLevel}
-          </Typography>
-        )}
+        <Box sx={{ fontSize: 28, flexShrink: 0 }}>💍</Box>
       </Box>
     </motion.div>
   );
