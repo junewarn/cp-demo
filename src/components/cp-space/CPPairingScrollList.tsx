@@ -6,7 +6,7 @@ import { useScrollAnimation } from '../../hooks/useScrollAnimation';
 import { GIFT_SCROLL_PAGE_SIZE, ANIMATION_DURATION } from '../../utils/constants';
 import { CPPairingMessage } from '../../types';
 
-/** 单条CP结成消息卡片 */
+/** 单条CP戒指赠送记录卡片 */
 const PairingMessageCard: React.FC<{ message: CPPairingMessage }> = ({ message }) => {
   return (
     <motion.div
@@ -29,12 +29,15 @@ const PairingMessageCard: React.FC<{ message: CPPairingMessage }> = ({ message }
           border: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        <Box sx={{ fontSize: 28, flexShrink: 0 }}>💕</Box>
+        <Box sx={{ fontSize: 28, flexShrink: 0 }}>💍</Box>
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.9)' }}>
-            {message.user1Name} ❤️ {message.user2Name}
+            {message.user1Name} 赠送 {message.user2Name}
           </Typography>
-          <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', mt: 0.25 }}>
+          <Typography sx={{ fontSize: 11, color: 'rgba(255,215,0,0.8)', mt: 0.25 }}>
+            {message.ringName}
+          </Typography>
+          <Typography sx={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', mt: 0.15 }}>
             {message.date}
           </Typography>
         </Box>
@@ -84,7 +87,7 @@ const CPPairingScrollList: React.FC = () => {
     return (
       <Box sx={{ textAlign: 'center', py: 3 }}>
         <Typography sx={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
-          暂无CP结成消息
+          暂无戒指赠送记录
         </Typography>
       </Box>
     );
@@ -119,7 +122,7 @@ const CPPairingScrollList: React.FC = () => {
           borderTop: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        实时滚动展示最新CP结成消息
+        实时滚动展示最新CP戒指赠送消息
       </Typography>
     </Box>
   );

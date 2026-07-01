@@ -62,6 +62,10 @@ function generateGlobalPairingMessages(): CPPairingMessage[] {
     '小甜心', '星辰', '阳光', '彩虹', '微风', '细雨', '小美', '小芳',
     '静静', '灵儿', '雪儿', '月儿', '诗涵', '婉清', '若曦',
   ];
+  const ringNames: string[] = [
+    '永恒之心', '璀璨星辰', '月光恋曲', '玫瑰誓言', '钻石之约',
+    '命运羁绊', '星河之恋', '天使之翼', '蓝色幻想', '皇室瑰宝',
+  ];
 
   for (let i = 0; i < 25; i++) {
     const name1 = i % 2 === 0
@@ -71,14 +75,15 @@ function generateGlobalPairingMessages(): CPPairingMessage[] {
       ? maleNames[i % maleNames.length]
       : femaleNames[(i + 7) % femaleNames.length];
     const date = new Date();
-    date.setDate(date.getDate() - i * (1 + (i % 3))); // 间隔 1-3 天
-    const cpLevel = (i % 10) + 1; // 随机 1-10 级
+    date.setDate(date.getDate() - i * (1 + (i % 3)));
+    const cpLevel = (i % 10) + 1;
 
     messages.push({
       id: `pairing-msg-${i}`,
       user1Name: name1,
       user2Name: name2,
       date: date.toISOString().split('T')[0],
+      ringName: ringNames[i % ringNames.length],
       cpLevel,
     });
   }

@@ -210,7 +210,7 @@ export interface CPCertificate {
 }
 
 // ============================================================
-// CP 结对消息相关
+// CP 戒指赠送记录相关
 // ============================================================
 
 export interface CPPairingMessage {
@@ -218,7 +218,8 @@ export interface CPPairingMessage {
   user1Name: string;
   user2Name: string;
   date: string;
-  cpLevel?: number; // 结成时的CP等级
+  ringName: string; // 赠送的戒指名称
+  cpLevel?: number;
 }
 
 // ============================================================
