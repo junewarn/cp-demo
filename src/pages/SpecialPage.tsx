@@ -6,6 +6,7 @@ import SpecialSlotGrid from '../components/special/SpecialSlotGrid';
 import SpecialUnlockModal from '../components/special/SpecialUnlockModal';
 import InvitationResponseModal from '../components/special/InvitationResponseModal';
 import ModalWrapper from '../components/common/ModalWrapper';
+import ConfirmUnbindModal from '../components/common/ConfirmUnbindModal';
 import Toast from '../components/common/Toast';
 import Confetti from '../components/effects/Confetti';
 import CrystalButton from '../components/common/CrystalButton';
@@ -110,16 +111,14 @@ const SpecialPage: React.FC = () => {
     setShowRemoveConfirm(id);
   }, []);
 
-  const handleRemoveConfirm = useCallback(() => {
-    if (showRemoveConfirm) {
-      dispatch({
-        type: 'REMOVE_SPECIAL_RELATIONSHIP',
-        payload: showRemoveConfirm,
-      });
-      setShowRemoveConfirm(null);
-      showToast('已解除 Special 关系', 'error');
-    }
-  }, [showRemoveConfirm, dispatch, showToast]);
+  const handleRemoveConfirm = useCallback((id: string) => {
+    dispatch({
+      type: 'REMOVE_SPECIAL_RELATIONSHIP',
+      payload: id,
+    });
+    setShowRemoveConfirm(null);
+    showToast('已解除 Special 关系', 'error');
+  }, [dispatch, showToast]);
 
   // ----- 邀请处理 -----
   const handleAcceptInvitation = useCallback(
@@ -322,87 +321,14 @@ const SpecialPage: React.FC = () => {
       />
 
       {/* 删除确认弹窗 */}
-      <ModalWrapper
+      <ConfirmUnbindModal
         open={showRemoveConfirm !== null}
         onClose={() => setShowRemoveConfirm(null)}
+        onConfirm={() => handleRemoveConfirm(showRemoveConfirm!)}
         title="💔 解除关系"
-      >
-        {removingRel && (
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography sx={{ fontSize: 48, mb: 1.5 }}>💔</Typography>
-            <Typography
-              sx={{ fontSize: 15, fontWeight: 600, color: '#333', mb: 1 }}
-            >
-              解除{' '}
-              <Box
-                component="span"
-                sx={{
-                  color:
-                    SPECIAL_TYPE_CONFIG[removingRel.type]?.color ?? '#333',
-                }}
-              >
-                {SPECIAL_TYPE_CONFIG[removingRel.type]?.label}
-              </Box>{' '}
-              关系
-            </Typography>
-            <Typography sx={{ fontSize: 13, color: '#888', mb: 1 }}>
-              确定要解除与{' '}
-              <Box
-                component="span"
-                sx={{ color: '#f59e0b', fontWeight: 600 }}
-              >
-                {removingRel.partner.name}
-              </Box>{' '}
-              的关系吗？
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: 12,
-                color: '#ef4444',
-                mb: 2,
-              }}
-            >
-              ⚠️ 解除后关系位将释放，但不会退还解锁费用
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Box
-                onClick={() => setShowRemoveConfirm(null)}
-                sx={{
-                  flex: 1,
-                  py: 1.2,
-                  borderRadius: 24,
-                  border: '1px solid #ddd',
-                  textAlign: 'center',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: '#666',
-                  cursor: 'pointer',
-                  '&:hover': { bgcolor: '#f5f5f5' },
-                }}
-              >
-                取消
-              </Box>
-              <Box
-                onClick={handleRemoveConfirm}
-                sx={{
-                  flex: 1,
-                  py: 1.2,
-                  borderRadius: 24,
-                  background: '#ef4444',
-                  textAlign: 'center',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: '#fff',
-                  cursor: 'pointer',
-                  '&:hover': { bgcolor: '#dc2626' },
-                }}
-              >
-                确认解除
-              </Box>
-            </Box>
-          </Box>
-        )}
-      </ModalWrapper>
+        description={`确定要解除与 ${removingRel?.partner.name} 的 ${SPECIAL_TYPE_CONFIG[removingRel?.type ?? 'bestie']?.label} 关系吗？`}
+        warningText="⚠️ 解除后关系位将释放，但不会退还解锁费用"
+      />
 
       {/* 邀请处理弹窗 */}
       <InvitationResponseModal

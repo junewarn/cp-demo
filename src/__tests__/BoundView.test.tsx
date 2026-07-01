@@ -281,16 +281,19 @@ describe('BoundView', () => {
   });
 
   // ----------------------------------------------------------
-  // UNBIND dispatch
+  // UNBIND confirmation modal flow
   // ----------------------------------------------------------
   describe('unbind action', () => {
-    it('should dispatch UNBIND_CP when 🔄 切换未绑定 is clicked in SELF mode', () => {
+    // With ConfirmUnbindModal now intercepting, clicking the button
+    // opens the modal. UNBIND_CP is only dispatched after code verification.
+    it('should NOT directly dispatch UNBIND_CP when 🔄 切换未绑定 is clicked (modal intercepts)', () => {
       const dispatch = vi.fn();
       const state = createBoundState({ viewMode: ViewMode.SELF });
       renderBoundView(state, dispatch);
 
       screen.getByText('🔄 切换未绑定').click();
-      expect(dispatch).toHaveBeenCalledWith({ type: 'UNBIND_CP' });
+      // The button now opens ConfirmUnbindModal instead of dispatching directly
+      expect(dispatch).not.toHaveBeenCalledWith({ type: 'UNBIND_CP' });
     });
   });
 

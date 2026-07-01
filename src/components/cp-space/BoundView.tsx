@@ -11,6 +11,7 @@ import HeartPulseLine from '../effects/HeartPulseLine';
 import CPTasksPage from '../../pages/CPTasksPage';
 import CPPrivilegesPage from '../../pages/CPPrivilegesPage';
 import CPRankingPage from '../../pages/CPRankingPage';
+import ConfirmUnbindModal from '../common/ConfirmUnbindModal';
 import { useAppState } from '../../hooks/useAppState';
 import { formatNumber } from '../../utils/helpers';
 import { HIGH_VALUE_GIFT_THRESHOLD } from '../../utils/constants';
@@ -21,6 +22,7 @@ const BoundView: React.FC = () => {
   const { state, dispatch } = useAppState();
   const { cpRelationship, viewMode, otherCPState } = state;
   const [showEntrance, setShowEntrance] = useState(false);
+  const [showUnbindConfirm, setShowUnbindConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState<'space' | 'tasks' | 'privileges' | 'ranking'>('space');
 
   const effectiveRelationship = (viewMode === ViewMode.OTHER && !cpRelationship)
@@ -267,7 +269,7 @@ const BoundView: React.FC = () => {
           <motion.div whileTap={{ scale: 0.95 }}>
             <Button
               variant="outlined"
-              onClick={() => dispatch({ type: 'UNBIND_CP' })}
+              onClick={() => setShowUnbindConfirm(true)}
               sx={{
                 borderRadius: 28,
                 px: 5,
@@ -289,6 +291,19 @@ const BoundView: React.FC = () => {
           )}
         </Box>
       </Box>
+
+      {/* 解除 CP 确认弹窗 */}
+      <ConfirmUnbindModal
+        open={showUnbindConfirm}
+        onClose={() => setShowUnbindConfirm(false)}
+        onConfirm={() => {
+          dispatch({ type: 'UNBIND_CP' });
+          setShowUnbindConfirm(false);
+        }}
+        title="💔 解除 CP 关系"
+        description="确定要解除 CP 关系吗？"
+        warningText="⚠️ 解除后 CP 等级、亲密度及所有相关数据将被清除，不可恢复"
+      />
     </Box>
   );
 };
