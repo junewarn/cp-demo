@@ -70,7 +70,7 @@ const App: React.FC = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AppProvider>
-        <BrowserRouter>
+        <BrowserRouter basename="/cp-demo">
           <PageContainer>
             <Suspense fallback={<LoadingFallback />}>
               <Routes>
