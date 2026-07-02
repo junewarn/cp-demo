@@ -645,10 +645,38 @@ const UnboundView: React.FC = () => {
                 fontSize: 11,
                 color: '#999',
                 mt: 1.5,
+                mb: 1.5,
               }}
             >
               These coins will be refunded to you after the invitation is rejected.
             </Typography>
+
+            {/* 滚动邀请记录 */}
+            <Box
+              sx={{
+                position: 'relative',
+                height: 120,
+                overflow: 'hidden',
+                borderRadius: 2,
+                bgcolor: 'rgba(255,240,245,0.6)',
+                border: '1px solid rgba(249,213,192,0.6)',
+                mx: -1,
+              }}
+            >
+              <Box
+                sx={{
+                  animation: 'scroll-records 8s linear infinite',
+                  '@keyframes scroll-records': {
+                    '0%': { transform: 'translateY(0)' },
+                    '100%': { transform: 'translateY(-50%)' },
+                  },
+                }}
+              >
+                {[...MOCK_SENT_INVITATIONS, ...MOCK_SENT_INVITATIONS].map((record, idx) => (
+                  <InvitationRecordItem key={`${record.id}-${idx}`} record={record} />
+                ))}
+              </Box>
+            </Box>
           </Box>
 
           {/* 底部玫瑰装饰 */}
@@ -664,22 +692,6 @@ const UnboundView: React.FC = () => {
             <Typography sx={{ fontSize: 18 }}>💖</Typography>
             <Typography sx={{ fontSize: 16 }}>🌹</Typography>
           </Box>
-        </Box>
-      </Box>
-
-      {/* 邀请记录 */}
-      <Box sx={{ px: 3, mt: 2, position: 'relative', zIndex: 2 }}>
-        <Box
-          sx={{
-            borderRadius: 3,
-            bgcolor: 'rgba(255,255,255,0.85)',
-            border: '2px solid #f9d5c0',
-            overflow: 'hidden',
-          }}
-        >
-          {MOCK_SENT_INVITATIONS.map((record) => (
-            <InvitationRecordItem key={record.id} record={record} />
-          ))}
         </Box>
       </Box>
 
