@@ -4,3 +4,12 @@ dist
 .vite
 NUL
 .workbuddy
+create-workflow.cjs
+debug-paths.cjs
+fix-workflow.cjs
+nginx.htaccess
+push-init.cjs
+push-to-github.cjs
+quick-push.cjs
+test-tree*.cjs
+site/

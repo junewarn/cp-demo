@@ -54,9 +54,6 @@ function renderUnboundView(
 }
 
 // Mock sub-components (paths relative to src/__tests__/)
-vi.mock('../components/cp-space/CPPairingScrollList', () => ({
-  default: () => <div data-testid="pairing-scroll" />,
-}));
 vi.mock('../components/cp-space/CPRulesModal', () => ({
   default: ({ open, onClose }: { open: boolean; onClose: () => void }) =>
     open ? <div data-testid="rules-modal" onClick={onClose}>Rules Modal</div> : null,
@@ -73,14 +70,6 @@ vi.mock('../components/cp-space/InviteCPModal', () => ({
   },
 }));
 
-vi.mock('../components/effects/GreekColumns', () => ({
-  default: () => <div data-testid="greek-columns" />,
-}));
-vi.mock('../components/common/CrystalButton', () => ({
-  default: ({ children, onClick, icon }: any) => (
-    <button data-testid={`crystal-${icon}`} onClick={onClick}>{icon} {children}</button>
-  ),
-}));
 vi.mock('../components/common/GoldenWingsFrame', () => ({
   default: ({ children }: any) => <div data-testid="golden-wings">{children}</div>,
 }));
@@ -217,9 +206,9 @@ describe('UnboundView', () => {
   });
 
   // ----------------------------------------------------------
-  // Blocking logic: CP伙伴空位 (slot click)
+  // Blocking logic: None yet empty slot click
   // ----------------------------------------------------------
-  describe('CP伙伴空位 blocking', () => {
+  describe('None yet slot blocking', () => {
     it('should block slot click when OTHER + otherCPState=BOUND (O3)', () => {
       const state = createUnboundState({
         viewMode: ViewMode.OTHER,
@@ -227,7 +216,7 @@ describe('UnboundView', () => {
       });
       renderUnboundView(state);
 
-      const slotLabel = screen.getByText('CP伙伴');
+      const slotLabel = screen.getByText('None yet');
       act(() => { slotLabel.click(); });
 
       const lastCall = mockInviteCPModalFn.mock.calls.at(-1);
@@ -242,7 +231,7 @@ describe('UnboundView', () => {
       });
       renderUnboundView(state);
 
-      const slotLabel = screen.getByText('CP伙伴');
+      const slotLabel = screen.getByText('None yet');
       act(() => { slotLabel.click(); });
 
       const openCall = mockInviteCPModalFn.mock.calls.find(
@@ -294,7 +283,7 @@ describe('UnboundView', () => {
       });
       renderUnboundView(state);
 
-      expect(screen.getByText('🔗 切换第三方已绑定')).toBeDefined();
+      expect(screen.getByText(/切换第三方/)).toBeDefined();
     });
 
     it('should NOT show third-party toggle in SELF mode', () => {
@@ -310,27 +299,27 @@ describe('UnboundView', () => {
   // Basic rendering
   // ----------------------------------------------------------
   describe('basic rendering', () => {
-    it('should render the main heading', () => {
+    it('should render the invite card heading', () => {
       const state = createUnboundState();
       renderUnboundView(state);
 
-      expect(screen.getByText('寻找你的CP')).toBeDefined();
+      expect(screen.getByText('Send a CP invitation to her with a Ring.')).toBeDefined();
     });
 
-    it('should render 查看榜单 and 查看特权 buttons', () => {
+    it('should render Ranking and Privilege buttons', () => {
       const state = createUnboundState();
       renderUnboundView(state);
 
-      expect(screen.getByTestId('crystal-🏆')).toBeDefined();
-      expect(screen.getByTestId('crystal-👑')).toBeDefined();
+      expect(screen.getByText('Ranking')).toBeDefined();
+      expect(screen.getByText('Privilege')).toBeDefined();
     });
 
-    it('should render 规则 and 申请记录 buttons', () => {
+    it('should render rules and apply buttons', () => {
       const state = createUnboundState();
       renderUnboundView(state);
 
-      expect(screen.getByText('❓ 规则')).toBeDefined();
-      expect(screen.getByText('📋 申请记录')).toBeDefined();
+      expect(screen.getByText('?')).toBeDefined();
+      expect(screen.getByText('Apply')).toBeDefined();
     });
 
     it('should include Invite CP price display', () => {
