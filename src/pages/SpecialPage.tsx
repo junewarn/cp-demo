@@ -123,13 +123,12 @@ const PRIVILEGE_LEVELS = [
   { level: 7, intimacy: 7, reward: '🔥', name: 'V-flame' },
 ];
 
-const PrivilegePreview: React.FC<{ onViewAll: () => void }> = ({ onViewAll }) => (
+const PrivilegePreview: React.FC = () => (
   <Box sx={{ px: 2, mt: 2 }}>
     <Box
       sx={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
         mb: 1.5,
       }}
     >
@@ -144,26 +143,6 @@ const PrivilegePreview: React.FC<{ onViewAll: () => void }> = ({ onViewAll }) =>
       >
         👑 Privilege
       </Typography>
-      <Box
-        onClick={onViewAll}
-        sx={{
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 0.3,
-          px: 1.2,
-          py: 0.4,
-          borderRadius: 2,
-          bgcolor: 'rgba(147,51,234,0.08)',
-          transition: 'all 0.2s',
-          '&:hover': { bgcolor: 'rgba(147,51,234,0.15)' },
-        }}
-      >
-        <Typography sx={{ fontSize: 11, color: '#7c3aed', fontWeight: 600 }}>
-          View All
-        </Typography>
-        <Typography sx={{ fontSize: 11, color: '#7c3aed' }}>→</Typography>
-      </Box>
     </Box>
 
     {/* 表头 */}
@@ -515,14 +494,11 @@ const SpecialPage: React.FC = () => {
           {/* Intimacy 面板 */}
           <IntimacyPanel
             relationships={specialRelationships}
-            onInvite={() => navigate('/special-select-friend')}
             onRemove={handleRemoveClick}
           />
 
           {/* 等级特权预览 */}
-          <PrivilegePreview
-            onViewAll={() => navigate('/special-privileges')}
-          />
+          <PrivilegePreview />
         </>
       ) : (
         <>

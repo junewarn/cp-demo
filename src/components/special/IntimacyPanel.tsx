@@ -6,7 +6,7 @@ import { SPECIAL_TYPE_CONFIG } from '../../utils/constants';
 
 interface IntimacyPanelProps {
   relationships: SpecialRelationship[];
-  onInvite: () => void;
+  onInvite?: () => void;
   onRemove?: (id: string) => void;
 }
 
@@ -126,7 +126,6 @@ const IntimacyCard: React.FC<{
 
 const IntimacyPanel: React.FC<IntimacyPanelProps> = ({
   relationships,
-  onInvite,
   onRemove,
 }) => {
   if (relationships.length === 0) return null;
@@ -138,7 +137,6 @@ const IntimacyPanel: React.FC<IntimacyPanelProps> = ({
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
           mb: 1.5,
         }}
       >
@@ -154,35 +152,6 @@ const IntimacyPanel: React.FC<IntimacyPanelProps> = ({
         >
           💜 Intimacy
         </Typography>
-        <Box
-          onClick={onInvite}
-          sx={{
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
-            px: 1.5,
-            py: 0.5,
-            borderRadius: 2,
-            bgcolor: 'rgba(147,51,234,0.08)',
-            border: '1px solid rgba(147,51,234,0.2)',
-            transition: 'all 0.2s',
-            '&:hover': {
-              bgcolor: 'rgba(147,51,234,0.15)',
-            },
-          }}
-        >
-          <Typography sx={{ fontSize: 14 }}>📨</Typography>
-          <Typography
-            sx={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: '#7c3aed',
-            }}
-          >
-            Invite
-          </Typography>
-        </Box>
       </Box>
 
       {/* 卡片网格 - 3 列，minmax 防止溢出 */}
