@@ -79,7 +79,7 @@ const SpecialInvitePage: React.FC = () => {
   };
 
   const selectedRecord = selectedInvitation
-    ? invitationRecords.find((r) => r.id === selectedInvitation)
+    ? (invitationRecords.find((r) => r.id === selectedInvitation) ?? null)
     : null;
 
   return (
