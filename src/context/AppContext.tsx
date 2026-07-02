@@ -11,10 +11,53 @@ import { appReducer } from './appReducer';
 import { mockCurrentUser, mockViewingUser, mockPartnerUser } from '../data/mockUser';
 import { mockBoundCP, mockUnboundCP, mockOtherCP } from '../data/mockCP';
 import { mockSpecialSlotConfigs, mockInvitationRecords } from '../data/mockSpecial';
+import { SpecialRelationship } from '../types';
 import { mockRankings } from '../data/mockRanking';
 import { mockPrivileges } from '../data/mockPrivileges';
 import { mockTasks, mockCheckInRecords } from '../data/mockTasks';
 import { getCookie, setCookie, deleteCookie, COOKIE_KEYS } from '../utils/cookies';
+import { SPECIAL_DEFAULT_SLOTS } from '../utils/constants';
+
+/** localStorage key for persisted special relationships */
+const SPECIAL_RELS_KEY = 'cp_specialRelationships';
+/** localStorage key for unlocked special slots count */
+const UNLOCKED_SLOTS_KEY = 'cp_unlockedSpecialSlots';
+
+/** 读取持久化的 Special 关系 */
+function getPersistedSpecialRelationships(): SpecialRelationship[] | null {
+  try {
+    const raw = localStorage.getItem(SPECIAL_RELS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed as SpecialRelationship[];
+  } catch {
+    // ignore parse errors
+  }
+  return null;
+}
+
+/** 写入持久化的 Special 关系 */
+function setPersistedSpecialRelationships(rels: SpecialRelationship[]): void {
+  try {
+    localStorage.setItem(SPECIAL_RELS_KEY, JSON.stringify(rels));
+  } catch {
+    // ignore write errors
+  }
+}
+
+/** 读取持久化的已解锁 Special 槽位数 */
+function getPersistedUnlockedSlots(): number {
+  try {
+    const raw = localStorage.getItem(UNLOCKED_SLOTS_KEY);
+    if (raw !== null) {
+      const val = parseInt(raw, 10);
+      if (val >= SPECIAL_DEFAULT_SLOTS && val <= 9) return val;
+    }
+  } catch {
+    // ignore
+  }
+  return SPECIAL_DEFAULT_SLOTS;
+}
 
 /** 生成全局礼物记录（全服滚动） */
 function generateGlobalGiftRecords(): GiftRecord[] {
@@ -191,13 +234,16 @@ function createInitialState(): AppState {
 
   const otherCPState: CPState = viewMode === ViewMode.OTHER ? CPState.BOUND : cpState;
 
+  const persistedSpecialRels = getPersistedSpecialRelationships();
+
   return {
     currentUser,
     cpState,
     otherCPState,
     cpRelationship,
-    specialRelationships: [],
+    specialRelationships: persistedSpecialRels ?? [],
     specialSlotConfigs: mockSpecialSlotConfigs,
+    unlockedSpecialSlots: getPersistedUnlockedSlots(),
     cpTasks,
     checkInRecords: mockCheckInRecords,
     cpPrivileges: mockPrivileges,
@@ -247,6 +293,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       deleteCookie(COOKIE_KEYS.CP_LEVEL);
     }
   }, [state.cpState]);
+
+  // ============================================================
+  // Special 关系 → localStorage 同步
+  // ============================================================
+  useEffect(() => {
+    if (!isMounted.current) return;
+    setPersistedSpecialRelationships(state.specialRelationships);
+  }, [state.specialRelationships]);
+
+  // ============================================================
+  // 已解锁 Special 槽位数 → localStorage 同步
+  // ============================================================
+  useEffect(() => {
+    if (!isMounted.current) return;
+    try { localStorage.setItem(UNLOCKED_SLOTS_KEY, String(state.unlockedSpecialSlots)); } catch {}
+  }, [state.unlockedSpecialSlots]);
 
   // ============================================================
   // CP 等级 → cookie 同步（仅绑定状态下有意义）

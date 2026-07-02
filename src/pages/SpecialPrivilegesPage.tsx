@@ -1,68 +1,220 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import TopBar from '../components/layout/TopBar';
-import CrystalButton from '../components/common/CrystalButton';
 import { useNavigate } from 'react-router-dom';
+
+// ============================================================
+// 特权等级数据
+// ============================================================
+
+interface PrivilegeLevel {
+  level: number;
+  intimacy: number;
+  rewardIcon: string;
+  rewardName: string;
+  unlocked: boolean;
+}
+
+const PRIVILEGE_LEVELS: PrivilegeLevel[] = [
+  { level: 1, intimacy: 1, rewardIcon: '💖', rewardName: 'LOVE', unlocked: true },
+  { level: 2, intimacy: 2, rewardIcon: '🖼️', rewardName: 'Frame', unlocked: true },
+  { level: 3, intimacy: 3, rewardIcon: '💬', rewardName: 'Bubble', unlocked: true },
+  { level: 4, intimacy: 4, rewardIcon: '🎀', rewardName: 'Ribbon', unlocked: false },
+  { level: 5, intimacy: 5, rewardIcon: '🏠', rewardName: 'LOBBY', unlocked: false },
+  { level: 6, intimacy: 6, rewardIcon: '🚪', rewardName: 'Entrance', unlocked: false },
+  { level: 7, intimacy: 7, rewardIcon: '🔥', rewardName: 'V-flame', unlocked: false },
+];
+
+// ============================================================
+// SpecialPrivilegesPage 组件
+// ============================================================
 
 const SpecialPrivilegesPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const privileges = [
-    { icon: '💎', name: '专属标识', desc: '在个人主页展示Special关系标识' },
-    { icon: '🎨', name: '关系主题色', desc: 'Bestie蓝 / Soulmate紫 / Homie金橙' },
-    { icon: '🎁', name: '专属礼物', desc: '每种关系类型解锁专属礼物库' },
-    { icon: '🏅', name: '关系勋章', desc: '不同等级解锁对应关系勋章' },
-    { icon: '📊', name: '榜单优先', desc: '在Special榜单中优先展示' },
-    { icon: '✨', name: '特效加成', desc: '赠送礼物附带关系专属特效' },
-  ];
-
   return (
-    <Box>
-      <TopBar title="👑 Special特权" showBack />
-      <Box sx={{ px: 2, mt: 2 }}>
-        <Typography
+    <Box sx={{ pb: 4, minHeight: '100dvh', background: 'linear-gradient(180deg, #ede9fe 0%, #ddd6fe 15%, #dbeafe 50%, #eff6ff 100%)' }}>
+      {/* 顶部导航 */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          px: 2,
+          pt: 2,
+          pb: 3,
+          gap: 1,
+        }}
+      >
+        <Box
+          onClick={() => navigate(-1)}
           sx={{
-            textAlign: 'center',
-            fontSize: 15,
-            fontWeight: 600,
-            color: '#555',
-            mb: 2,
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            bgcolor: 'rgba(147,51,234,0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            fontSize: 18,
+            transition: 'all 0.2s',
+            '&:hover': { bgcolor: 'rgba(147,51,234,0.16)' },
           }}
         >
-          每种Special关系都有专属特权等你解锁
+          ←
+        </Box>
+        <Typography
+          sx={{
+            fontSize: 20,
+            fontWeight: 800,
+            background: 'linear-gradient(135deg, #7c3aed, #4D96FF)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          👑 Special Privilege
         </Typography>
+      </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          {privileges.map((p) => (
-            <Box
-              key={p.name}
+      {/* 表格 */}
+      <Box sx={{ px: 2 }}>
+        {/* 表头 */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: 1,
+            px: 1.5,
+            py: 1.2,
+            borderRadius: 2,
+            bgcolor: 'rgba(147,51,234,0.06)',
+            mb: 1,
+          }}
+        >
+          {['Level', 'Intimacy', 'Reward'].map((h) => (
+            <Typography
+              key={h}
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.5,
-                p: 2,
-                bgcolor: '#fff',
-                borderRadius: 2,
-                border: '1px solid #f0f0f0',
+                fontSize: 12,
+                fontWeight: 700,
+                color: '#7c3aed',
+                textAlign: 'center',
               }}
             >
-              <Typography sx={{ fontSize: 28 }}>{p.icon}</Typography>
-              <Box>
-                <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#333' }}>
-                  {p.name}
-                </Typography>
-                <Typography sx={{ fontSize: 12, color: '#888' }}>{p.desc}</Typography>
-              </Box>
-            </Box>
+              {h}
+            </Typography>
           ))}
         </Box>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-          <CrystalButton onClick={() => navigate('/special-invite')} icon="📨">
-            邀请好友建立Special关系
-          </CrystalButton>
-        </Box>
+        {/* 数据行 */}
+        {PRIVILEGE_LEVELS.map((pl) => (
+          <Box
+            key={pl.level}
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr 1fr',
+              gap: 1,
+              alignItems: 'center',
+              px: 1.5,
+              py: 1.8,
+              borderRadius: 2,
+              mb: 0.8,
+              bgcolor: pl.unlocked
+                ? 'rgba(147,51,234,0.04)'
+                : '#fff',
+              border: pl.unlocked
+                ? '1px solid rgba(147,51,234,0.15)'
+                : '1px solid rgba(0,0,0,0.05)',
+              opacity: pl.unlocked ? 1 : 0.55,
+            }}
+          >
+            {/* Level */}
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: pl.unlocked ? '#7c3aed' : '#bbb',
+                textAlign: 'center',
+              }}
+            >
+              Lv.{pl.level}
+            </Typography>
 
+            {/* Intimacy */}
+            <Box sx={{ textAlign: 'center' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 1,
+                }}
+              >
+                <Box
+                  sx={{
+                    flex: 1,
+                    maxWidth: 80,
+                    height: 6,
+                    borderRadius: 3,
+                    bgcolor: '#f0f0f0',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      height: '100%',
+                      width: `${(pl.intimacy / 7) * 100}%`,
+                      borderRadius: 3,
+                      background: pl.unlocked
+                        ? 'linear-gradient(90deg, #7c3aed, #a78bfa)'
+                        : 'linear-gradient(90deg, #ccc, #ddd)',
+                      transition: 'width 0.5s ease',
+                    }}
+                  />
+                </Box>
+                <Typography
+                  sx={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: pl.unlocked ? '#7c3aed' : '#ccc',
+                    minWidth: 16,
+                  }}
+                >
+                  {pl.intimacy}
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Reward */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 0.6,
+              }}
+            >
+              <Typography sx={{ fontSize: 18, lineHeight: 1 }}>
+                {pl.rewardIcon}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: pl.unlocked ? '#555' : '#ccc',
+                }}
+              >
+                {pl.rewardName}
+              </Typography>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+
+      {/* 底部说明 */}
+      <Box sx={{ px: 2, mt: 4, textAlign: 'center' }}>
+        <Typography sx={{ fontSize: 12, color: '#aaa' }}>
+          💡 提升 Special 亲密度以解锁更多特权
+        </Typography>
       </Box>
     </Box>
   );

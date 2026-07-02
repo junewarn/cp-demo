@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SpecialType } from '../types';
 import { SPECIAL_INVITATION_COST } from '../utils/constants';
 import { useAppState } from '../hooks/useAppState';
+import EntranceEffect from '../components/effects/EntranceEffect';
 
 // ============================================================
 // Mock Data
@@ -119,10 +120,10 @@ const GIFT_LIST: GiftItem[] = [
   { icon: '🌹', name: 'Rose', price: 99 },
   { icon: '💐', name: 'Bouquet', price: 299 },
   { icon: '🎂', name: 'Cake', price: 520 },
-  { icon: '💎', name: 'bind Special', price: SPECIAL_INVITATION_COST, isSpecial: true },
+  { icon: '📿', name: 'bind Special', price: SPECIAL_INVITATION_COST, isSpecial: true },
   { icon: '👑', name: 'Crown', price: 5200 },
   { icon: '🌟', name: 'Star', price: 9999 },
-  { icon: '💍', name: 'Ring', price: 9999 },
+  { icon: '💍', name: 'bind cp', price: 9999 },
   { icon: '🤜', name: 'Wristband', price: 8888 },
   { icon: '🦄', name: 'Unicorn', price: 13140 },
 ];
@@ -1315,11 +1316,12 @@ const SpecialModal: React.FC<{
 const VoiceRoomPage: React.FC = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useAppState();
-  const { currentUser } = state;
+  const { currentUser, cpRelationship } = state;
 
   // 状态
   const [showGiftPanel, setShowGiftPanel] = useState(false);
   const [showSpecialModal, setShowSpecialModal] = useState(false);
+  const [showEntrance, setShowEntrance] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
@@ -1412,8 +1414,45 @@ const VoiceRoomPage: React.FC = () => {
       {/* A. 顶部标题栏 */}
       <TopBar onBack={handleBack} gold={currentUser.gold} />
 
+      {/* CP 入场特效 */}
+      <EntranceEffect
+        user1Name={currentUser.name}
+        user1Avatar={currentUser.avatar}
+        user2Name={cpRelationship?.partner.name ?? ROOM_USERS[1].name}
+        user2Avatar={cpRelationship?.partner.avatar ?? ROOM_USERS[1].avatar}
+        level={cpRelationship?.cpLevel ?? 1}
+        trigger={showEntrance}
+        onComplete={() => setShowEntrance(false)}
+      />
+
       {/* B. 房主信息区 */}
       <HostInfo />
+
+      {/* 播放入场特效按钮 */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: -1, mb: 1.5 }}>
+        <Box
+          onClick={() => setShowEntrance(true)}
+          sx={{
+            px: 4,
+            py: 0.8,
+            borderRadius: 24,
+            bgcolor: 'rgba(255,255,255,0.1)',
+            border: '1px solid rgba(255,255,255,0.25)',
+            color: 'rgba(255,255,255,0.85)',
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            '&:hover': {
+              bgcolor: 'rgba(255,255,255,0.18)',
+              borderColor: 'rgba(255,255,255,0.4)',
+            },
+            '&:active': { transform: 'scale(0.96)' },
+          }}
+        >
+          ✨ 播放入场特效
+        </Box>
+      </Box>
 
       {/* C. 麦位区 */}
       <MicGrid />

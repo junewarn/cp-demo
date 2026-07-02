@@ -22,6 +22,7 @@ function createBaseState(overrides: Partial<AppState> = {}): AppState {
     cpRelationship: null,
     specialRelationships: [],
     specialSlotConfigs: [],
+    unlockedSpecialSlots: 3,
     cpTasks: [],
     checkInRecords: [],
     cpPrivileges: [],

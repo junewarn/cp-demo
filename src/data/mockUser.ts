@@ -5,9 +5,13 @@ export const mockCurrentUser: User = {
   name: '小甜心',
   avatar: 'https://picsum.photos/seed/user1/200/200',
   gender: Gender.FEMALE,
+  age: 26,
   level: 9,
   signature: '和宝贝在一起的每一天都是甜的 💕',
   gold: 128000,
+  region: 'Indonesia',
+  flag: '🇮🇩',
+  tags: ['🎵 Music', '🎮 Game', '📷 Photo'],
 };
 
 export const mockPartnerUser: User = {

@@ -1,143 +1,168 @@
 import React, { useState } from 'react';
-import { Box, Typography, TextField, Button, Alert } from '@mui/material';
-import { motion } from 'framer-motion';
-import TopBar from '../components/layout/TopBar';
-import { SpecialType, Gender } from '../types';
-import { SPECIAL_TYPE_CONFIG } from '../utils/constants';
+import { Box, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Gender } from '../types';
 import { useAppState } from '../hooks/useAppState';
+import InvitationHistory from '../components/special/InvitationHistory';
+import InvitationResponseModal from '../components/special/InvitationResponseModal';
+import Toast from '../components/common/Toast';
+import Confetti from '../components/effects/Confetti';
 
 const SpecialInvitePage: React.FC = () => {
   const { state, dispatch } = useAppState();
-  const [userId, setUserId] = useState('');
-  const [selectedType, setSelectedType] = useState<SpecialType>(SpecialType.BESTIE);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const [selectedInvitation, setSelectedInvitation] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: 'success' | 'error';
+    visible: boolean;
+  }>({ message: '', type: 'success', visible: false });
 
-  const handleSend = () => {
-    if (!userId.trim()) {
-      setError('请输入好友ID');
-      return;
-    }
+  const { currentUser, invitationRecords } = state;
+
+  // 只显示待我确认的邀请
+  const pendingToMe = invitationRecords.filter(
+    (r) => r.status === 'pending' && r.toUser.id === currentUser.id,
+  );
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type, visible: true });
+  };
+
+  const handleAccept = (id: string) => {
+    const record = invitationRecords.find((r) => r.id === id);
+    if (!record) return;
 
     dispatch({
-      type: 'SEND_INVITE',
+      type: 'UPDATE_INVITATION_STATUS',
+      payload: { id, status: 'accepted' },
+    });
+
+    dispatch({
+      type: 'ADD_SPECIAL_RELATIONSHIP',
       payload: {
-        id: `sp-new-${Date.now()}`,
+        id: `sp-${Date.now()}`,
         partner: {
-          id: userId.trim(),
-          name: `用户${userId.trim()}`,
-          avatar: `https://picsum.photos/seed/${userId.trim()}/200/200`,
-          gender: Gender.FEMALE,
+          id: record.fromUser.id,
+          name: record.fromUser.name,
+          avatar: record.fromUser.avatar,
+          gender: Gender.OTHER,
           level: 1,
           signature: '',
           gold: 0,
         },
-        type: selectedType,
+        type: record.type,
         establishedDate: new Date().toISOString().split('T')[0],
         level: 1,
-        days: 0,
+        days: 1,
       },
     });
 
-    setMessage(`已成功向 ${userId.trim()} 发送 ${SPECIAL_TYPE_CONFIG[selectedType].label} 邀请！`);
-    setUserId('');
-    setError('');
+    setSelectedInvitation(null);
+    setShowConfetti(true);
+    showToast('已接受邀请！🎉', 'success');
+
+    // 自动跳转回 Special 主页查看新关系
+    setTimeout(() => {
+      navigate('/special', { replace: true });
+    }, 1500);
   };
 
+  const handleReject = (id: string) => {
+    dispatch({
+      type: 'UPDATE_INVITATION_STATUS',
+      payload: { id, status: 'rejected' },
+    });
+    setSelectedInvitation(null);
+    showToast('已拒绝邀请', 'error');
+  };
+
+  const selectedRecord = selectedInvitation
+    ? invitationRecords.find((r) => r.id === selectedInvitation)
+    : null;
+
   return (
-    <Box sx={{ pb: 10 }}>
-      <TopBar title="📨 Special邀请" showBack />
-      <Box sx={{ px: 2, mt: 3 }}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+    <Box
+      sx={{
+        pb: 10,
+        minHeight: '100dvh',
+        background: 'linear-gradient(180deg, #ede9fe 0%, #ddd6fe 15%, #dbeafe 50%, #eff6ff 100%)',
+      }}
+    >
+      {/* 顶部 */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          px: 2,
+          pt: 2,
+          pb: 2,
+          gap: 1,
+        }}
+      >
+        <Box
+          onClick={() => navigate(-1)}
+          sx={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            bgcolor: 'rgba(147,51,234,0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            fontSize: 18,
+            transition: 'all 0.2s',
+            '&:hover': { bgcolor: 'rgba(147,51,234,0.16)' },
+          }}
         >
-          {/* 关系类型选择 */}
-          <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#555', mb: 1.5 }}>
-            选择关系类型
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-            {(
-              Object.entries(SPECIAL_TYPE_CONFIG) as [SpecialType, (typeof SPECIAL_TYPE_CONFIG)[SpecialType]][]
-            ).map(([type, config]) => (
-              <Box
-                key={type}
-                onClick={() => setSelectedType(type)}
-                sx={{
-                  flex: 1,
-                  textAlign: 'center',
-                  p: 2,
-                  borderRadius: 2,
-                  cursor: 'pointer',
-                  border: `2px solid ${selectedType === type ? config.color : '#e0e0e0'}`,
-                  bgcolor: selectedType === type ? config.bg : '#fff',
-                  transition: 'all 0.2s',
-                }}
-              >
-                <Typography sx={{ fontSize: 28, mb: 0.5 }}>{config.icon}</Typography>
-                <Typography
-                  sx={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: selectedType === type ? config.color : '#999',
-                  }}
-                >
-                  {config.label}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-
-          {/* 用户ID输入 */}
-          <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#555', mb: 1.5 }}>
-            输入好友ID
-          </Typography>
-          <TextField
-            fullWidth
-            placeholder="请输入好友的用户ID"
-            value={userId}
-            onChange={(e) => {
-              setUserId(e.target.value);
-              setError('');
-              setMessage('');
-            }}
-            error={!!error}
-            helperText={error}
-            sx={{
-              mb: 3,
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 2,
-                bgcolor: '#fff',
-              },
-            }}
-          />
-
-          {message && (
-            <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-              {message}
-            </Alert>
-          )}
-
-          <Button
-            fullWidth
-            variant="contained"
-            onClick={handleSend}
-            sx={{
-              py: 1.5,
-              borderRadius: 28,
-              fontSize: 15,
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #9B59B6, #4D96FF)',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #7E3FB0, #3570D8)',
-              },
-            }}
-          >
-            📨 发送邀请
-          </Button>
-        </motion.div>
+          ←
+        </Box>
+        <Typography
+          sx={{
+            fontSize: 20,
+            fontWeight: 800,
+            background: 'linear-gradient(135deg, #7c3aed, #4D96FF)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          Apply
+        </Typography>
       </Box>
+
+      {/* Pending Confirmations */}
+      <Box sx={{ mt: 2 }}>
+        <InvitationHistory
+          records={pendingToMe}
+          title="Pending Confirmations"
+          onItemClick={(record) => setSelectedInvitation(record.id)}
+        />
+      </Box>
+
+      {/* 邀请处理弹窗 */}
+      <InvitationResponseModal
+        open={selectedInvitation !== null}
+        record={selectedRecord}
+        onClose={() => setSelectedInvitation(null)}
+        onAccept={handleAccept}
+        onReject={handleReject}
+      />
+
+      {/* Toast */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onClose={() => setToast((prev) => ({ ...prev, visible: false }))}
+      />
+
+      {/* 撒花动画 */}
+      <Confetti
+        active={showConfetti}
+        onComplete={() => setShowConfetti(false)}
+      />
     </Box>
   );
 };

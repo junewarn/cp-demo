@@ -180,9 +180,9 @@ export const SPECIAL_INVITATION_COST = 100000;
 
 /** Special 礼物图标映射 */
 export const SPECIAL_GIFT_ICONS: Record<SpecialType, string> = {
-  [SpecialType.BESTIE]: '💎',
-  [SpecialType.SOULMATE]: '💍',
-  [SpecialType.HOMIE]: '🤜',
+  [SpecialType.BESTIE]: '📿',
+  [SpecialType.SOULMATE]: '📿',
+  [SpecialType.HOMIE]: '📿',
 };
 
 /** Special 礼物名称映射 */

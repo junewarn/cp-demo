@@ -48,6 +48,7 @@ function createBoundState(overrides: Partial<AppState> = {}): AppState {
     },
     specialRelationships: [],
     specialSlotConfigs: [],
+    unlockedSpecialSlots: 3,
     cpTasks: [],
     checkInRecords: [],
     cpPrivileges: [],
@@ -143,22 +144,6 @@ describe('BoundView', () => {
   // UI Element Visibility in OTHER mode
   // ----------------------------------------------------------
   describe('UI visibility - OTHER mode', () => {
-    it('should hide 入场特效 button in OTHER mode', () => {
-      const state = createBoundState({ viewMode: ViewMode.OTHER });
-      renderBoundView(state);
-
-      const entranceBtn = screen.queryByText('✨ 播放入场特效');
-      expect(entranceBtn).toBeNull();
-    });
-
-    it('should show 入场特效 button in SELF mode', () => {
-      const state = createBoundState({ viewMode: ViewMode.SELF });
-      renderBoundView(state);
-
-      const entranceBtn = screen.getByText('✨ 播放入场特效');
-      expect(entranceBtn).toBeDefined();
-    });
-
     it('should hide 🔄 切换未绑定 button in OTHER mode', () => {
       const state = createBoundState({ viewMode: ViewMode.OTHER });
       renderBoundView(state);
@@ -294,62 +279,6 @@ describe('BoundView', () => {
       screen.getByText('🔄 切换未绑定').click();
       // The button now opens ConfirmUnbindModal instead of dispatching directly
       expect(dispatch).not.toHaveBeenCalledWith({ type: 'UNBIND_CP' });
-    });
-  });
-
-  // ----------------------------------------------------------
-  // GiftBanner - totalGiftValue uses effectiveRelationship
-  // ----------------------------------------------------------
-  describe('GiftBanner', () => {
-    it('should show GiftBanner when totalGiftValue >= threshold (900000)', () => {
-      const state = createBoundState({
-        viewMode: ViewMode.SELF,
-        cpRelationship: {
-          id: 'cp-001',
-          partner: {
-            id: 'user-002',
-            name: '小美',
-            avatar: '',
-            gender: Gender.FEMALE,
-            level: 1,
-            signature: '',
-            gold: 0,
-          },
-          cpLevel: 5,
-          intimacyScore: 5000,
-          loveDays: 100,
-          boundDate: '2024-01-01',
-          is7DayTaskComplete: true,
-          badges: [],
-          memories: [],
-          upgradeRecords: [],
-          giftRecords: [
-            { id: 'g-1', giftName: 'Castle', giftIcon: '🏰', value: 900000, senderId: 'user-001', receiverId: 'user-002', date: '2024-06-01' },
-          ],
-        },
-      });
-      renderBoundView(state);
-
-      // 900000 >= 900000 (HIGH_VALUE_GIFT_THRESHOLD) → should show
-      expect(screen.getByTestId('gift-banner')).toBeDefined();
-    });
-
-    it('should use mockOtherCP giftRecords when in OTHER mode with null cpRelationship', () => {
-      const state = createBoundState({
-        viewMode: ViewMode.OTHER,
-        cpRelationship: null,
-      });
-      renderBoundView(state);
-
-      // mockOtherCP has giftRecords with value > threshold
-      const mockTotal = mockOtherCP.giftRecords.reduce((sum, g) => sum + g.value, 0);
-      // Components render using mockOtherCP's data
-      expect(screen.getByTestId('couple-avatar')).toBeDefined();
-      // GiftBanner visibility depends on mockOtherCP's total
-      // (mockOtherCP has 15 gift records that sum to > threshold)
-      if (mockTotal >= 13140) {
-        expect(screen.getByTestId('gift-banner')).toBeDefined();
-      }
     });
   });
 

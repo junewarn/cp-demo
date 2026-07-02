@@ -111,6 +111,18 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         },
       };
 
+    case 'UNLOCK_SPECIAL_SLOT':
+      return {
+        ...state,
+        unlockedSpecialSlots: Math.min(9, state.unlockedSpecialSlots + 1),
+      };
+
+    case 'SET_UNLOCKED_SPECIAL_SLOTS':
+      return {
+        ...state,
+        unlockedSpecialSlots: action.payload,
+      };
+
     case 'UPDATE_INVITATION_STATUS':
       return {
         ...state,

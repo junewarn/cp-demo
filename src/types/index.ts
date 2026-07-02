@@ -45,9 +45,13 @@ export interface User {
   name: string;
   avatar: string;
   gender: Gender;
+  age?: number;
   level: number;
   signature: string;
   gold: number;
+  region?: string;
+  flag?: string;
+  tags?: string[];
 }
 
 // ============================================================
@@ -233,6 +237,7 @@ export interface AppState {
   cpRelationship: CPRelationship | null;
   specialRelationships: SpecialRelationship[];
   specialSlotConfigs: SpecialSlotConfig[];
+  unlockedSpecialSlots: number;
   cpTasks: CPTask[];
   checkInRecords: CheckInRecord[];
   cpPrivileges: CPPrivilege[];
@@ -264,4 +269,6 @@ export type AppAction =
   | { type: 'REMOVE_SPECIAL_RELATIONSHIP'; payload: string }
   | { type: 'DEDUCT_GOLD'; payload: number }
   | { type: 'SET_GOLD'; payload: number }
+  | { type: 'UNLOCK_SPECIAL_SLOT' }
+  | { type: 'SET_UNLOCKED_SPECIAL_SLOTS'; payload: number }
   | { type: 'UPDATE_INVITATION_STATUS'; payload: { id: string; status: 'accepted' | 'rejected' } };

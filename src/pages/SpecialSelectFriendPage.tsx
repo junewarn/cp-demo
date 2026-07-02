@@ -104,7 +104,7 @@ const SpecialSelectFriendPage: React.FC = () => {
         id: selectedFriend.id,
         name: selectedFriend.name,
         avatar: selectedFriend.avatar,
-        gender: 0 as any,
+        gender: selectedFriend.gender,
         level: selectedFriend.level,
         signature: '',
         gold: 0,

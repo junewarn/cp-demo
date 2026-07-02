@@ -318,3 +318,91 @@ html, body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* ============================================================
+   Special 蓝紫色梦主题
+   ============================================================ */
+
+:root {
+  /* Special 主题渐变色 */
+  --sp-theme-start: #ede9fe;
+  --sp-theme-mid: #ddd6fe;
+  --sp-theme-end: #dbeafe;
+  --sp-theme-gradient: linear-gradient(180deg, #ede9fe 0%, #e8e0fc 25%, #dbeafe 60%, #eff6ff 100%);
+  --sp-accent: #7c3aed;
+  --sp-accent-light: #a78bfa;
+  --sp-accent-dim: #c4b5fd;
+  --sp-blue: #4D96FF;
+  --sp-blue-light: #93c5fd;
+  --sp-purple: #9B59B6;
+  --sp-pink: #ec4899;
+}
+
+.sp-theme-bg {
+  background: var(--sp-theme-gradient);
+  min-height: 100dvh;
+}
+
+.sp-gradient-text {
+  background: linear-gradient(135deg, var(--sp-accent), var(--sp-blue), var(--sp-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sp-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(147, 51, 234, 0.1);
+  border-radius: 16px;
+}
+
+.sp-btn-primary {
+  background: linear-gradient(135deg, var(--sp-accent), var(--sp-blue));
+  color: #fff;
+  border-radius: 24px;
+  font-weight: 700;
+  border: none;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sp-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
+}
+
+.sp-btn-primary:active {
+  transform: scale(0.97);
+}
+
+.sp-btn-outline {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--sp-accent-dim);
+  color: var(--sp-accent);
+  border-radius: 24px;
+  font-weight: 600;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sp-btn-outline:hover {
+  background: rgba(147, 51, 234, 0.06);
+}
+
+@keyframes sp-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes sp-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(124, 58, 237, 0.2); }
+  50% { box-shadow: 0 0 24px rgba(124, 58, 237, 0.45); }
+}
+
+@keyframes sp-ring-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

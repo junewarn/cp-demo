@@ -4,24 +4,20 @@ import { motion } from 'framer-motion';
 import CoupleAvatarGroup from './CoupleAvatarGroup';
 import AchievementRow from './AchievementRow';
 import MemoryList from './MemoryList';
-import GiftBanner from '../effects/GiftBanner';
-import EntranceEffect from '../effects/EntranceEffect';
 import GreekColumns from '../effects/GreekColumns';
 import HeartPulseLine from '../effects/HeartPulseLine';
+import CPStatsCard from './CPStatsCard';
 import CPTasksPage from '../../pages/CPTasksPage';
 import CPPrivilegesPage from '../../pages/CPPrivilegesPage';
 import CPRankingPage from '../../pages/CPRankingPage';
 import ConfirmUnbindModal from '../common/ConfirmUnbindModal';
 import { useAppState } from '../../hooks/useAppState';
-import { formatNumber } from '../../utils/helpers';
-import { HIGH_VALUE_GIFT_THRESHOLD } from '../../utils/constants';
 import { ViewMode, CPState } from '../../types';
 import { mockOtherCP } from '../../data/mockCP';
 
 const BoundView: React.FC = () => {
   const { state, dispatch } = useAppState();
   const { cpRelationship, viewMode, otherCPState } = state;
-  const [showEntrance, setShowEntrance] = useState(false);
   const [showUnbindConfirm, setShowUnbindConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState<'space' | 'tasks' | 'privileges' | 'ranking'>('space');
 
@@ -32,24 +28,10 @@ const BoundView: React.FC = () => {
   if (!effectiveRelationship) return null;
 
   const isOtherView = viewMode === ViewMode.OTHER;
-  const totalGiftValue = effectiveRelationship.giftRecords.reduce((sum, g) => sum + g.value, 0);
-  const showGiftBanner = totalGiftValue >= HIGH_VALUE_GIFT_THRESHOLD;
 
   return (
     <Box sx={{ pb: 10, position: 'relative' }}>
       <GreekColumns />
-
-      <GiftBanner visible={showGiftBanner} giftCount={totalGiftValue} />
-
-      <EntranceEffect
-        user1Name={state.currentUser.name}
-        user1Avatar={state.currentUser.avatar}
-        user2Name={effectiveRelationship.partner.name}
-        user2Avatar={effectiveRelationship.partner.avatar}
-        level={effectiveRelationship.cpLevel}
-        trigger={showEntrance}
-        onComplete={() => setShowEntrance(false)}
-      />
 
       {/* 顶部信息卡 */}
       <Box
@@ -77,57 +59,15 @@ const BoundView: React.FC = () => {
           {/* 脉冲爱心线 */}
           {!effectiveRelationship.is7DayTaskComplete && <HeartPulseLine />}
 
-          {/* 统计数据 */}
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              gap: 3,
-              mt: 1,
-              px: 2,
-            }}
-          >
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#FFD700' }}>
-                {effectiveRelationship.loveDays}
-              </Typography>
-              <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>Love Days</Typography>
-            </Box>
-            <Box sx={{ width: 1, bgcolor: 'rgba(255,255,255,0.15)' }} />
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#FF6B9D' }}>
-                {formatNumber(effectiveRelationship.intimacyScore)}
-              </Typography>
-              <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>Intimacy</Typography>
-            </Box>
-            <Box sx={{ width: 1, bgcolor: 'rgba(255,255,255,0.15)' }} />
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#FFD700' }}>
-                {formatNumber(totalGiftValue)}
-              </Typography>
-              <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>Gift Gold</Typography>
-            </Box>
-          </Box>
+          {/* CP 统计信息卡 */}
+          <CPStatsCard
+            loveDays={effectiveRelationship.loveDays}
+            cpLevel={effectiveRelationship.cpLevel}
+            intimacyScore={effectiveRelationship.intimacyScore}
+            boundDate={effectiveRelationship.boundDate}
+            onTerminate={!isOtherView ? () => setShowUnbindConfirm(true) : undefined}
+          />
 
-          {/* 入场特效按钮 */}
-          {!isOtherView && (
-            <Box sx={{ textAlign: 'center', mt: 2 }}>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => setShowEntrance(true)}
-                sx={{
-                  borderRadius: 16,
-                  borderColor: 'rgba(255,255,255,0.3)',
-                  color: 'rgba(255,255,255,0.8)',
-                  fontSize: 12,
-                  px: 2,
-                }}
-              >
-                ✨ 播放入场特效
-              </Button>
-            </Box>
-          )}
         </Box>
       </Box>
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { SpecialInvitationRecord, SpecialType } from '../../types';
+import { SpecialInvitationRecord } from '../../types';
 import { SPECIAL_TYPE_CONFIG } from '../../utils/constants';
 
 interface InvitationHistoryProps {
@@ -9,20 +9,18 @@ interface InvitationHistoryProps {
   maxItems?: number;
   /** 点击记录回调 */
   onItemClick?: (record: SpecialInvitationRecord) => void;
-  /** 是否显示快速绑定按钮 */
-  showQuickBind?: boolean;
-  /** 快速绑定点击回调 */
-  onQuickBind?: () => void;
+  /** 自定义标题 */
+  title?: string;
 }
 
 /** 状态标签配置 */
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  pending: { label: '待确认', color: '#f59e0b' },
-  accepted: { label: '已接受', color: '#22c55e' },
-  rejected: { label: '已拒绝', color: '#ef4444' },
+  pending: { label: 'Pending', color: '#f59e0b' },
+  accepted: { label: 'Accepted', color: '#22c55e' },
+  rejected: { label: 'Rejected', color: '#ef4444' },
 };
 
-/** 单条邀请记录 */
+/** 单条邀请记录（匹配截图：头像 → 文字 → 头像 → 礼物） */
 const HistoryItem: React.FC<{
   record: SpecialInvitationRecord;
   onClick?: (record: SpecialInvitationRecord) => void;
@@ -37,96 +35,88 @@ const HistoryItem: React.FC<{
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: 1.5,
-        px: 2,
-        py: 1.5,
-        bgcolor: '#fff',
-        borderRadius: 2,
-        border: '1px solid #f0f0f0',
+        gap: 1.2,
+        px: 1.5,
+        py: 1.2,
+        bgcolor: 'rgba(255,255,255,0.6)',
+        borderRadius: 2.5,
+        border: '1px solid rgba(147,51,234,0.1)',
         cursor: isPending ? 'pointer' : 'default',
         transition: 'all 0.2s',
         ...(isPending && {
           '&:hover': {
             borderColor: typeConfig.color,
             boxShadow: `0 2px 8px ${typeConfig.color}20`,
+            bgcolor: 'rgba(255,255,255,0.85)',
           },
         }),
       }}
     >
-      {/* 礼物图标 */}
+      {/* 发送者头像 */}
       <Box
+        component="img"
+        src={record.fromUser.avatar}
+        alt={record.fromUser.name}
         sx={{
           width: 40,
           height: 40,
           borderRadius: '50%',
-          bgcolor: typeConfig.bg,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 20,
+          objectFit: 'cover',
+          border: '2px solid #fff',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           flexShrink: 0,
         }}
-      >
-        {record.giftIcon}
-      </Box>
+      />
 
-      {/* 内容区 */}
+      {/* 文案 */}
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.3 }}>
+        <Typography sx={{ fontSize: 12, color: '#666', lineHeight: 1.4 }}>
+          sent a{' '}
           <Typography
+            component="span"
             sx={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: '#333',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              fontSize: 12,
+              fontWeight: 700,
+              color: typeConfig.color,
             }}
           >
-            {record.fromUser.name}
-          </Typography>
-          <Typography sx={{ fontSize: 12, color: '#aaa' }}>→</Typography>
+            Special
+          </Typography>{' '}
+          invitation to
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.3 }}>
+          {/* 接收者头像 */}
+          <Box
+            component="img"
+            src={record.toUser.avatar}
+            alt={record.toUser.name}
+            sx={{
+              width: 22,
+              height: 22,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: '1px solid #fff',
+            }}
+          />
           <Typography
             sx={{
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: 600,
-              color: '#333',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              color: '#555',
             }}
           >
             {record.toUser.name}
           </Typography>
           <Box
             sx={{
-              ml: 0.5,
-              px: 0.8,
-              py: 0.2,
-              borderRadius: 8,
-              bgcolor: typeConfig.bg,
-              color: typeConfig.color,
-              fontSize: 10,
-              fontWeight: 600,
-              flexShrink: 0,
-            }}
-          >
-            {typeConfig.label}
-          </Box>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: 11, color: '#999' }}>
-            {record.createdAt}
-          </Typography>
-          <Box
-            sx={{
               px: 0.8,
               py: 0.1,
-              borderRadius: 8,
+              borderRadius: 1,
               bgcolor: `${statusCfg.color}15`,
               color: statusCfg.color,
               fontSize: 10,
               fontWeight: 600,
+              flexShrink: 0,
             }}
           >
             {statusCfg.label}
@@ -134,17 +124,23 @@ const HistoryItem: React.FC<{
         </Box>
       </Box>
 
-      {/* 花费 */}
-      <Typography
+      {/* 礼物图标 */}
+      <Box
         sx={{
-          fontSize: 11,
-          fontWeight: 600,
-          color: '#f59e0b',
+          width: 36,
+          height: 36,
+          borderRadius: '50%',
+          bgcolor: typeConfig.bg,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 18,
           flexShrink: 0,
+          border: `1px solid ${typeConfig.border}`,
         }}
       >
-        🪙 {(record.cost / 1000).toFixed(0)}K
-      </Typography>
+        {record.giftIcon}
+      </Box>
     </Box>
   );
 };
@@ -154,52 +150,30 @@ const InvitationHistory: React.FC<InvitationHistoryProps> = ({
   records,
   maxItems,
   onItemClick,
-  showQuickBind = false,
-  onQuickBind,
+  title = 'Invitation History',
 }) => {
   const displayRecords = maxItems ? records.slice(0, maxItems) : records;
 
   return (
-    <Box>
-      <Box sx={{ textAlign: 'center', mb: 2 }}>
-        <Typography sx={{ fontSize: 12, color: '#999', mb: 1 }}>
-          邀请更多好友建立专属联结
-        </Typography>
-        {showQuickBind && (
-          <Box
-            onClick={onQuickBind}
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 0.5,
-              px: 4,
-              py: 1,
-              borderRadius: '24px',
-              background: 'linear-gradient(135deg, #E91E8C, #FF6B9D)',
-              color: '#fff',
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(233,30,140,0.3)',
-              transition: 'all 0.2s',
-              '&:hover': { boxShadow: '0 4px 14px rgba(233,30,140,0.45)' },
-              '&:active': { transform: 'scale(0.96)' },
-            }}
-          >
-            🔗 快速绑定
-          </Box>
-        )}
-      </Box>
-
+    <Box sx={{ px: 2 }}>
       {/* 邀请记录标题 */}
-      <Typography sx={{ fontSize: 14, fontWeight: 700, color: '#555', mb: 1.5, px: 1 }}>
-        📋 邀请记录
+      <Typography
+        sx={{
+          fontSize: 15,
+          fontWeight: 800,
+          background: 'linear-gradient(135deg, #7c3aed, #4D96FF)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          mb: 1.5,
+        }}
+      >
+        {title}
       </Typography>
 
       {displayRecords.length === 0 ? (
-        <Box sx={{ textAlign: 'center', py: 4 }}>
+        <Box sx={{ textAlign: 'center', py: 4, bgcolor: 'rgba(255,255,255,0.4)', borderRadius: 2 }}>
           <Typography sx={{ fontSize: 13, color: '#bbb' }}>
-            暂无邀请记录
+            No invitation records yet
           </Typography>
         </Box>
       ) : (
